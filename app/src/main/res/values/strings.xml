@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Database Interface</string>
+    <string name="header">Customers</string>
+</resources>
