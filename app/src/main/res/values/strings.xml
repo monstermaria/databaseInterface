@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">Database Interface</string>
     <string name="header">Customers</string>
+    <string name="customer_id">Customer ID: %1$d</string>
+    <string name="customer_name">Customer name: %1$s</string>
+    <string name="customer_address">Customer address: %1$s</string>
+    <string name="contact_name">Contact name: %1$s</string>
+    <string name="telephone_number">Telephone number: %1$s</string>
 </resources>

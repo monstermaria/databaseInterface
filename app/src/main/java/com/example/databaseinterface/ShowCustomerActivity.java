@@ -18,19 +18,19 @@ public class ShowCustomerActivity extends AppCompatActivity {
         if (customer != null) {
 
             v = findViewById(R.id.customerIdView);
-            v.setText(String.valueOf(customer.getCustomerId()));
+            v.setText(getString(R.string.customer_id, customer.getCustomerId()));
 
             v = findViewById(R.id.customerNameView);
-            v.setText(customer.getCustomerName());
+            v.setText(getString(R.string.customer_name, customer.getCustomerName()));
 
             v = findViewById(R.id.customerAddressView);
-            v.setText(customer.getCustomerAddress());
+            v.setText(getString(R.string.customer_address, customer.getCustomerAddress()));
 
             v = findViewById(R.id.contactNameView);
-            v.setText(customer.getContactName());
+            v.setText(getString(R.string.contact_name, customer.getContactName()));
 
             v = findViewById(R.id.telephoneNumberView);
-            v.setText(customer.getTelephoneNumber());
+            v.setText(getString(R.string.telephone_number, customer.getTelephoneNumber()));
         }
     }
 }

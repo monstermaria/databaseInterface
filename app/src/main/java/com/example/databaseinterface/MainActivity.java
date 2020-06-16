@@ -22,9 +22,9 @@ public class MainActivity extends AppCompatActivity {
 
         DatabaseHandler dbHandler = new DatabaseHandler(this);
 
-        dbHandler.addCustomer(new Customer("Ett", "Gatan 1", "A", "123456"));
-        dbHandler.addCustomer(new Customer("Två", "Gatan 2", "B", "234567"));
-        dbHandler.addCustomer(new Customer("Tre", "Gatan 3", "C", "345678"));
+        dbHandler.addCustomer(new Customer("Företag Ett", "Storgatan 1", "Anna", "123456"));
+        dbHandler.addCustomer(new Customer("Företag Två", "Storgatan 2", "Bertil", "234567"));
+        dbHandler.addCustomer(new Customer("Företag Tre", "Storgatan 3", "Cecilia", "345678"));
 
         ArrayList<Customer> customers = dbHandler.getAllCustomers();
 
