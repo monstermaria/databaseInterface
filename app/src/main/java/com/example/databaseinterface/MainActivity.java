@@ -2,14 +2,15 @@ package com.example.databaseinterface;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.SimpleCursorAdapter;
+import android.widget.TextView;
 
-import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -26,14 +27,22 @@ public class MainActivity extends AppCompatActivity {
         dbHandler.addCustomer(new Customer("Företag Två", "Storgatan 2", "Bertil", "234567"));
         dbHandler.addCustomer(new Customer("Företag Tre", "Storgatan 3", "Cecilia", "345678"));
 
-        ArrayList<Customer> customers = dbHandler.getAllCustomers();
+        Cursor customers = dbHandler.getAllCustomers();
+        int[] toViews = { R.id.id, R.id.name, R.id.address, R.id.contact, R.id.telephone };
+        SimpleCursorAdapter adapter = new SimpleCursorAdapter(
+                this,
+                R.layout.customer,
+                customers,
+                dbHandler.COLUMNS,
+                toViews,
+                0
+        );
 
-        CustomerArrayAdapter adapter = new CustomerArrayAdapter(this, customers);
         ListView customersView = findViewById(R.id.listView);
         customersView.setAdapter(adapter);
         customersView.setOnItemClickListener(new CustomerOnClick());
 
-        Log.d("Number of customers ", String.valueOf(customers.size()));
+        Log.d("Number of customers ", String.valueOf(customers.getCount()));
     }
 
     private class CustomerOnClick implements AdapterView.OnItemClickListener {
@@ -41,14 +50,33 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onItemClick(AdapterView parent, View v, int position, long id) {
 
-            Log.d("CustomerOnClick", String.valueOf(position));
+            Log.d("CustomerOnClick pos", String.valueOf(position));
+            Log.d("CustomerOnClick id", String.valueOf(id));
 
-            Customer customer = (Customer) parent.getItemAtPosition(position);
+            View details = v.findViewById(R.id.details);
+            int visibility = details.getVisibility();
 
-            Intent intent = new Intent(parent.getContext(), ShowCustomerActivity.class);
-            intent.putExtra("customer", customer);
-
-            startActivity(intent);
+            switch (visibility) {
+                case View.VISIBLE:
+                    Log.d("Customer details", "VISIBLE");
+                    details.setVisibility(View.GONE);
+                    break;
+                case View.INVISIBLE:
+                    Log.d("Customer details", "INVISIBLE");
+                    details.setVisibility(View.GONE);
+                    break;
+                case View.GONE:
+                    Log.d("Customer details", "GONE");
+//                    TextView textView = v.findViewById(R.id.id);
+//                    CharSequence text = textView.getText();
+//                    textView.setText(getString(R.string.customer_id, Integer.parseInt(text.toString())));
+//                    Log.d("Customer id", text.toString());
+                    details.setVisibility(View.VISIBLE);
+                    break;
+                default:
+                    details.setVisibility(View.GONE);
+                    Log.d("Customer details", String.valueOf(visibility));
+            }
         }
     }
 }

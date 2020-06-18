@@ -17,11 +17,13 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 1;
     private static final String DATABASE = "example_database";
     private static final String TABLE = "customers";
-    private static final String KEY_CUSTOMER_ID = "CustomerID";
+    private static final String KEY_CUSTOMER_ID = "_id";
     private static final String KEY_CUSTOMER_NAME = "CustomerName";
     private static final String KEY_CUSTOMER_ADDRESS = "CustomerAddress";
     private static final String KEY_CONTACT_NAME = "ContactName";
     private static final String KEY_PHONE_NUMBER = "PhoneNumber";
+
+    final String[] COLUMNS = {KEY_CUSTOMER_ID, KEY_CUSTOMER_NAME, KEY_CUSTOMER_ADDRESS, KEY_CONTACT_NAME, KEY_PHONE_NUMBER};
 
     public DatabaseHandler(@Nullable Context context) {
         super(context, DATABASE, null, DATABASE_VERSION);
@@ -69,7 +71,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         Customer customer = null;
         SQLiteDatabase db = this.getReadableDatabase();
 
-        String[] COLUMNS = {KEY_CUSTOMER_ID, KEY_CUSTOMER_NAME, KEY_CUSTOMER_ADDRESS, KEY_CONTACT_NAME, KEY_PHONE_NUMBER};
         String SELECTION = KEY_CUSTOMER_ID + "=?";
         String[] SELECTION_ARGS = {String.valueOf(id)};
 
@@ -85,21 +86,21 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return customer;
     }
 
-    ArrayList<Customer> getAllCustomers() {
+    Cursor getAllCustomers() {
 
         ArrayList<Customer> customers = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
 
-        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE, null);
+        return db.rawQuery("SELECT * FROM " + TABLE, null);
 
-        while (cursor.moveToNext()) {
-            customers.add(getCustomerObjectFromCursor(cursor));
-        }
-
-        cursor.close();
-        db.close();
-
-        return customers;
+//        while (cursor.moveToNext()) {
+//            customers.add(getCustomerObjectFromCursor(cursor));
+//        }
+//
+//        cursor.close();
+//        db.close();
+//
+//        return customers;
     }
 
     Customer getCustomerObjectFromCursor(Cursor cursor) {
