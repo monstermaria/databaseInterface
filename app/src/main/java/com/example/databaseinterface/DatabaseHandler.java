@@ -25,6 +25,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     final String[] COLUMNS = {KEY_CUSTOMER_ID, KEY_CUSTOMER_NAME, KEY_CUSTOMER_ADDRESS, KEY_CONTACT_NAME, KEY_PHONE_NUMBER};
 
+    private SQLiteDatabase db;
+
     public DatabaseHandler(@Nullable Context context) {
         super(context, DATABASE, null, DATABASE_VERSION);
     }
@@ -54,7 +56,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     void addCustomer(Customer customer) {
 
-        SQLiteDatabase db = this.getWritableDatabase();
+        db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
         values.put(KEY_CUSTOMER_NAME, customer.getCustomerName());
@@ -69,7 +71,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     Customer getCustomer(int id) {
 
         Customer customer = null;
-        SQLiteDatabase db = this.getReadableDatabase();
+        db = this.getReadableDatabase();
 
         String SELECTION = KEY_CUSTOMER_ID + "=?";
         String[] SELECTION_ARGS = {String.valueOf(id)};
@@ -89,7 +91,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     Cursor getAllCustomers() {
 
         ArrayList<Customer> customers = new ArrayList<>();
-        SQLiteDatabase db = this.getReadableDatabase();
+        db = this.getReadableDatabase();
 
         return db.rawQuery("SELECT * FROM " + TABLE, null);
 
@@ -101,6 +103,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 //        db.close();
 //
 //        return customers;
+    }
+
+    @Override
+    public void close() {
+        db.close();
+        super.close();
     }
 
     Customer getCustomerObjectFromCursor(Cursor cursor) {
