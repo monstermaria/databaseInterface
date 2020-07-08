@@ -8,11 +8,12 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.SimpleCursorAdapter;
-import android.widget.TextView;
 
 
 public class MainActivity extends AppCompatActivity {
+
+    DatabaseHandler dbHandler;
+    Cursor customers;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,31 +22,36 @@ public class MainActivity extends AppCompatActivity {
 
         Log.d("onCreate", this.toString());
 
-        DatabaseHandler dbHandler = new DatabaseHandler(this);
+        dbHandler = new DatabaseHandler(this);
 
         dbHandler.addCustomer(new Customer("Företag Ett", "Storgatan 1", "Anna", "123456"));
         dbHandler.addCustomer(new Customer("Företag Två", "Storgatan 2", "Bertil", "234567"));
         dbHandler.addCustomer(new Customer("Företag Tre", "Storgatan 3", "Cecilia", "345678"));
+        dbHandler.addCustomer(new Customer("Företag Fyra", "Storgatan 4", "Diego", "456789"));
 
-        Cursor customers = dbHandler.getAllCustomers();
-        int[] toViews = { R.id.id, R.id.name, R.id.address, R.id.contact, R.id.telephone };
-        SimpleCursorAdapter adapter = new SimpleCursorAdapter(
-                this,
-                R.layout.customer,
-                customers,
-                dbHandler.COLUMNS,
-                toViews,
-                0
-        );
+        customers = dbHandler.getAllCustomers();
+
+        CustomerCursorAdapter adapter = new CustomerCursorAdapter(this, customers);
 
         ListView customersView = findViewById(R.id.listView);
+
         customersView.setAdapter(adapter);
         customersView.setOnItemClickListener(new CustomerOnClick());
 
         Log.d("Number of customers ", String.valueOf(customers.getCount()));
     }
 
-    private class CustomerOnClick implements AdapterView.OnItemClickListener {
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        customers.close();
+        dbHandler.close();
+
+        Log.d("onDestroy", "Closing resources");
+    }
+
+    private static class CustomerOnClick implements AdapterView.OnItemClickListener {
 
         @Override
         public void onItemClick(AdapterView parent, View v, int position, long id) {
@@ -53,30 +59,28 @@ public class MainActivity extends AppCompatActivity {
             Log.d("CustomerOnClick pos", String.valueOf(position));
             Log.d("CustomerOnClick id", String.valueOf(id));
 
-            View details = v.findViewById(R.id.details);
-            int visibility = details.getVisibility();
+            // find out current visibility
+            CustomerCursorAdapter adapter = (CustomerCursorAdapter) parent.getAdapter();
+            boolean showDetails = adapter.showDetails[position];
 
-            switch (visibility) {
-                case View.VISIBLE:
-                    Log.d("Customer details", "VISIBLE");
-                    details.setVisibility(View.GONE);
-                    break;
-                case View.INVISIBLE:
-                    Log.d("Customer details", "INVISIBLE");
-                    details.setVisibility(View.GONE);
-                    break;
-                case View.GONE:
-                    Log.d("Customer details", "GONE");
-//                    TextView textView = v.findViewById(R.id.id);
-//                    CharSequence text = textView.getText();
-//                    textView.setText(getString(R.string.customer_id, Integer.parseInt(text.toString())));
-//                    Log.d("Customer id", text.toString());
-                    details.setVisibility(View.VISIBLE);
-                    break;
-                default:
-                    details.setVisibility(View.GONE);
-                    Log.d("Customer details", String.valueOf(visibility));
+            Log.d("Customer show before", String.valueOf(adapter.showDetails[position]));
+
+            // change visibility
+            View details = v.findViewById(R.id.details);
+
+            if (showDetails) {
+                // hide details
+                details.setVisibility(View.GONE);
+                // update visibility array
+                adapter.showDetails[position] = false;
+            } else {
+                // show details
+                details.setVisibility(View.VISIBLE);
+                // update visibility array
+                adapter.showDetails[position] = true;
             }
+
+            Log.d("Customer show after", String.valueOf(adapter.showDetails[position]));
         }
     }
 }
